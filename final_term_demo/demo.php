@@ -29,7 +29,7 @@
         <?php 
             ini_set('display_errors', 0);
             $conn = new mysqli("localhost", "root", "0000", "final_term_demo");
-            $conn->query("SET CHARACTER SET UTF8");
+            $conn->query("SET NAMES utf8");
             $instr="select * from lose_money order by date desc, id desc";
 
             if(!empty($_GET['op_type'])) {
