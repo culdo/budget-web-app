@@ -8,8 +8,7 @@
 </head>
 <body>
     <?php
-        $ttt = "foo"
-        echo "$ttt bar"
+        phpinfo();
     ?>
 </body>
 </html>

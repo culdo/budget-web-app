@@ -27,9 +27,12 @@
 
     <div class="content">
         <?php 
+            ini_set('display_errors', 1);
             if(!empty($_GET['op_type'])) {
                 $op_type = $_GET['op_type'];
                 $conn = new mysqli("localhost", "root", "0000", "final_term_demo");
+                $conn->query("SET CHARACTER SET UTF8");
+                
                 $instr = null;
                 
                 if($op_type=="search") {
