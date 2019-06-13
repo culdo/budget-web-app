@@ -27,12 +27,13 @@
 
     <div class="content">
         <?php 
-            ini_set('display_errors', 1);
+            ini_set('display_errors', 0);
+            $conn = new mysqli("localhost", "root", "0000", "final_term_demo");
+            $conn->query("SET CHARACTER SET UTF8");
+            $instr="select * from lose_money order by date desc, id desc";
+
             if(!empty($_GET['op_type'])) {
                 $op_type = $_GET['op_type'];
-                $conn = new mysqli("localhost", "root", "0000", "final_term_demo");
-                $conn->query("SET CHARACTER SET UTF8");
-                
                 $instr = null;
                 
                 if($op_type=="search") {
@@ -95,60 +96,60 @@
                     $instr = "delete from lose_money where id=$del_id";
                 } else {
                     echo "我Get不到你想做啥就丟全部";
-                    $instr="select * from lose_money order by date desc, id desc";
                 }
-                
-                if($instr!=null) {
-                    // echo $instr."<br>";
-                    $result=$conn->query($instr);
-                    
-                    if($result===true) {
-                        if($op_type=="insert" or $op_type=="delete") {
-                            if($op_type=="insert") {
-                                $last_id = $conn->insert_id;
-                            }
-                            $result=$conn->query("select * from lose_money order by date desc, id desc");
-                        }
-                    }
-                    if ($result->num_rows > 0) {
-                        // output data of each row
-                        while($row = $result->fetch_assoc()) {
-                            $date = explode(" ", $row["date"])[0];
-                            $name = $row["name"];
-                            $kind = $row["kind"];
-                            $cost = $row["cost"];
-                            $info = $row["info"];
-                            $id = $row["id"];
-                            $weekday = '星期' . ['日', '一', '二', '三', '四', '五', '六'][date("w", strtotime($date))];
-                            
-                            if($op_type=="delete" and $id==$_GET["next_id"]) {
-                                echo "<h2 id='deleted' style='text-align: center;'>成功刪除此花費<a href='#$del_id'>#$del_id</a></h2>";
-                            }
-
-                            echo "<div id='$id' class='card'>
-                                    <div class='container'><div>";
-                            if($op_type=="insert" and $id==$last_id) {
-                                echo "<span style='color:red; border: 2px red solid;margin-right:5px;'><b>新加入</b></span>";
-                            }
-                            echo "<a href='#$id'>#$id</a><button class='btn-x' onclick='drop_item(this, $id);'>🞩</button>
-                            </div>
-                            <h3>
-                                <b id='ed-name' contenteditable=true>$name</b>
-                                <span style='float:right;'>噴<span id='ed-cost' contenteditable=true>$cost</span>元</span>
-                            </h3>
-                                    <p style='white-space:pre;'><span id='ed-kind' contenteditable=true>$kind</span><span>  <span id='ed-info' contenteditable=true>$info</span><span><span style='float:right;'><span id='ed-date' contenteditable=true>$date</span><span>  $weekday</span></p> 
-                                </div>";
-                            if($row["image"]!=null) {
-                                $image = $row["image"];
-                                echo "<img src='$image' alt='Avatar' style='width:100%'>";
-                            }
-                            echo "</div>";
-                        }
-                    } 
-                } 
-
-                $conn->close();
             }
+            
+                
+            if($instr!=null) {
+                // echo $instr."<br>";
+                $result=$conn->query($instr);
+                
+                if($result===true) {
+                    if($op_type=="insert" or $op_type=="delete") {
+                        if($op_type=="insert") {
+                            $last_id = $conn->insert_id;
+                        }
+                        $result=$conn->query("select * from lose_money order by date desc, id desc");
+                    }
+                }
+                if ($result->num_rows > 0) {
+                    // output data of each row
+                    while($row = $result->fetch_assoc()) {
+                        $date = explode(" ", $row["date"])[0];
+                        $name = $row["name"];
+                        $kind = $row["kind"];
+                        $cost = $row["cost"];
+                        $info = $row["info"];
+                        $id = $row["id"];
+                        $weekday = '星期' . ['日', '一', '二', '三', '四', '五', '六'][date("w", strtotime($date))];
+                        
+                        if($op_type=="delete" and $id==$_GET["next_id"]) {
+                            echo "<h2 id='deleted' style='text-align: center;'>成功刪除此花費<a href='#$del_id'>#$del_id</a></h2>";
+                        }
+
+                        echo "<div id='$id' class='card'>
+                                <div class='container'><div>";
+                        if($op_type=="insert" and $id==$last_id) {
+                            echo "<span style='color:red; border: 2px red solid;margin-right:5px;'><b>新加入</b></span>";
+                        }
+                        echo "<a href='#$id'>#$id</a><button class='btn-x' onclick='drop_item(this, $id);'>🞩</button>
+                        </div>
+                        <h3>
+                            <b id='ed-name' contenteditable=true>$name</b>
+                            <span style='float:right;'>噴<span id='ed-cost' contenteditable=true>$cost</span>元</span>
+                        </h3>
+                                <p style='white-space:pre;'><span id='ed-kind' contenteditable=true>$kind</span><span>  <span id='ed-info' contenteditable=true>$info</span><span><span style='float:right;'><span id='ed-date' contenteditable=true>$date</span><span>  $weekday</span></p> 
+                            </div>";
+                        if($row["image"]!=null) {
+                            $image = $row["image"];
+                            echo "<img src='$image' alt='Avatar' style='width:100%'>";
+                        }
+                        echo "</div>";
+                    }
+                } 
+            } 
+
+            $conn->close();
         ?>
     </div>
 
