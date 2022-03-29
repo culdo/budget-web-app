@@ -1,5 +1,5 @@
 # 多功能記帳Web APP
-![demo](https://i.imgur.com/UcGwFJS.gif "Demo")
+![demo](https://user-images.githubusercontent.com/26900749/160599022-2602f870-7075-42f4-9ae9-2c8162d3c958.gif "Demo")
 > 這裡有DEMO錄影，檔案過肥請稍等
 ## Environment
 * Ubuntu 16.04 & 18.04 (Tested)
