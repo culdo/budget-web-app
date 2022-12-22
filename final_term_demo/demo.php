@@ -28,8 +28,7 @@
     <div class="content">
         <?php 
             ini_set('display_errors', 0);
-            $conn = new mysqli("localhost", "root", "0000", "final_term_demo");
-            $conn->query("SET NAMES utf8");
+            $conn = new SQLite3("../db.sqlite");
             $instr="select * from lose_money order by date desc, id desc";
 
             if(!empty($_GET['op_type'])) {
@@ -42,8 +41,8 @@
                     $is_first_q = true;
                     foreach ($_GET as $param=>$value) {
                         if($param!="op_type" and $value!=null) {
-                            $param = $conn->escape_string($param);
-                            $value = $conn->escape_string($value);
+                            $param = SQLite3::escapeString($param);
+                            $value = SQLite3::escapeString($value);
                             if($is_first_q) {
                                 $instr .= " where ";
                             }else {
@@ -68,8 +67,8 @@
                         $query = array();
                         foreach ($_GET as $param=>$value) {
                             if($param!="op_type" and $value!=null) {
-                                $param = $conn->escape_string($param);
-                                $value = $conn->escape_string($value);
+                                $param = SQLite3::escapeString($param);
+                                $value = SQLite3::escapeString($value);
                                 $query[$param] = "'$value'";
                             }
                         }
@@ -82,7 +81,7 @@
                 } elseif($op_type=="plszz") {
                     if(!empty($_GET["kind"])) {
                         $kind = $_GET["kind"];
-                        $kind = $conn->escape_string($kind);
+                        $kind = SQLite3::escapeString($kind);
                         $instr = "select * from lose_money where kind = '$kind' order by rand() limit 1 ";
                     } else {
                         $meals = array('早午餐','早餐','午餐','晚餐');
@@ -92,29 +91,28 @@
                         $instr = "select * from lose_money where kind in ('$kind') order by rand() limit 1 ";
                     }
                 }elseif($op_type=="delete" and !empty($_GET["id"])) {
-                    $del_id = $conn->escape_string($_GET["id"]);
+                    $del_id = SQLite3::escapeString($_GET["id"]);
                     $instr = "delete from lose_money where id=$del_id";
                 } else {
                     echo "我Get不到你想做啥就丟全部";
                 }
             }
-            
-                
+
             if($instr!=null) {
                 // echo $instr."<br>";
                 $result=$conn->query($instr);
-                
-                if($result===true) {
+
+                if($result!==false) {
                     if($op_type=="insert" or $op_type=="delete") {
                         if($op_type=="insert") {
-                            $last_id = $conn->insert_id;
+                            $last_id = $conn->lastInsertRowID();
                         }
                         $result=$conn->query("select * from lose_money order by date desc, id desc");
                     }
                 }
-                if ($result->num_rows > 0) {
+                if ($result->numColumns() && $result->columnType(0) != SQLITE3_NULL) {
                     // output data of each row
-                    while($row = $result->fetch_assoc()) {
+                    while($row = $result->fetchArray()) {
                         $date = explode(" ", $row["date"])[0];
                         $name = $row["name"];
                         $kind = $row["kind"];
@@ -132,7 +130,7 @@
                         if($op_type=="insert" and $id==$last_id) {
                             echo "<span style='color:red; border: 2px red solid;margin-right:5px;'><b>新加入</b></span>";
                         }
-                        echo "<a href='#$id'>#$id</a><button class='btn-x' onclick='drop_item(this, $id);'>🞩</button>
+                        echo "<a href='#$id'>#$id</a><button class='btn-x' onclick='drop_item(this, $id);'>X</button>
                         </div>
                         <h3>
                             <b id='ed-name' contenteditable=true>$name</b>
@@ -146,7 +144,11 @@
                         }
                         echo "</div>";
                     }
-                } 
+                }else{
+                    if($op_type=="delete") {
+                        echo "<h2 id='deleted' style='text-align: center;'>成功刪除此花費<a href='#$del_id'>#$del_id</a></h2>";
+                    }
+                }
             } 
 
             $conn->close();
@@ -163,8 +165,10 @@
         }
         function drop_item(bt, id) {
             let next_el = bt.parentNode.parentNode.parentNode.nextElementSibling;
-            if(next_el.id=="deleted") {
+            if(next_el && next_el.id==="deleted") {
                 next_el = next_el.nextElementSibling;
+            }else{
+                location.href=`demo.php?op_type=delete&id=${id}#deleted`;
             }
             let next_id = next_el.id;
             location.href=`demo.php?op_type=delete&id=${id}&next_id=${next_id}#deleted`;

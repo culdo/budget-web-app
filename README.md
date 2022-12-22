@@ -9,14 +9,14 @@
 ## SQL table
 ```SQL
 CREATE TABLE `lose_money` (
-  `id` int(11) NOT NULL,
+  `id` int(11) PRIMARY KEY AUTOINCREMENT,
   `date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `kind` varchar(10) NOT NULL DEFAULT '未分類',
   `image` varchar(100) NOT NULL DEFAULT 'https://www.jiuwa.net/tuku/20180728/E7AIP6Gu.gif',
   `name` varchar(50) NOT NULL DEFAULT '未知',
   `cost` int(11) NOT NULL,
   `info` varchar(100) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+);
 ```
 ## Requirements
 * Mysql
