@@ -82,13 +82,13 @@
                     if(!empty($_GET["kind"])) {
                         $kind = $_GET["kind"];
                         $kind = SQLite3::escapeString($kind);
-                        $instr = "select * from lose_money where kind = '$kind' order by rand() limit 1 ";
+                        $instr = "select * from lose_money where kind = '$kind' order by random() limit 1 ";
                     } else {
-                        $meals = array('早午餐','早餐','午餐','晚餐');
-                        $kind = rand(0, 3);
+                        $meals = array('早午餐', '晚餐');
+                        $kind = array_rand($meals);
                         // if($kind<=1) $kind = 0; else $kind -= 1;
                         $kind = $meals[$kind];
-                        $instr = "select * from lose_money where kind in ('$kind') order by rand() limit 1 ";
+                        $instr = "select * from lose_money where kind in ('$kind') order by random() limit 1 ";
                     }
                 }elseif($op_type=="delete" and !empty($_GET["id"])) {
                     $del_id = SQLite3::escapeString($_GET["id"]);
